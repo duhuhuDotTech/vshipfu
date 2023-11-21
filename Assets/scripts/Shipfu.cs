@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ public class Shipfu
     public float maxhealth = 100;
     public float damage = 10;
     public float armour = 10;
+    public float evasion = 10;
     public float speed = 10;
     public float reload = 10;
 
@@ -15,18 +17,14 @@ public class Shipfu
     public ShipWeight shipWeight;
     public ShipType shipType;
 
-    public int xp = 40;
+    public int xp = 0;
     public int level = 0;
 
-
     public enum ShipID
-    {
-        shippa = 0,
-        protoShipfu = 1,
+    {        protoShipfu = 0,
+        shippa = 1,
         tenma = 2,
-        lumi = 3,
-        lia = 4,
-        kirsch = 5
+        kirsch = 3
     }
 
     public enum ShipWeight
@@ -64,10 +62,47 @@ public class Shipfu
         Dead
     }
 
-
-    public Shipfu gachaPull()
+    public static Shipfu gachaPull()
     {
+        var nuship = new Shipfu();
 
+
+        var y = GameState.random.Next(50);
+        y = y - y % 10;
+        y = y / 10;
+
+        nuship.shipID = (Shipfu.ShipID)y;
+        nuship.shipWeight = 0;
+        nuship.shipType = ShipType.gunboat;
+
+        return nuship;
+    }
+
+    public void levelup()
+    {
+        level++;
+        xp = 0;
+        maxhealth += 10;
+        health = maxhealth;
+        damage += 3;
+        armour += 3;
+        evasion += 1;
+        speed  += 1;
+        reload += 1; 
+
+        if(level % 10 == 0 && (int)shipWeight < 11)
+        {
+            shipWeight++;
+            health += 100;
+            damage += 30;
+            armour += 6;
+
+            if(shipID == 0)
+            {
+                shipID = (Shipfu.ShipID)GameState.random.Next(1, 3);
+            }
+            
+        }
 
     }
 }

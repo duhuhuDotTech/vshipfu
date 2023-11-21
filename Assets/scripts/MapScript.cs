@@ -15,6 +15,8 @@ public class MapScript : MonoBehaviour
     public Tile fleet1;
     public Tile fleet2;
     public Tile fleet3;
+    public Tile fleet4;
+    public Tile fleet5;
 
     public Tile clearTile;
 
@@ -22,11 +24,11 @@ public class MapScript : MonoBehaviour
     {
         if (GameState.battleResult == GameState.BattleResult.Win)
         {
-            foreach (var t in GameState.enemyFleets.Keys)
+            foreach (var t in GameData.enemyFleets.Keys)
             {
-                if (GameState.enemyFleets[t].location == GameState.enemyFleets[GameState.currentTarget].location)
+                if (GameData.enemyFleets[t].location == GameData.enemyFleets[GameState.currentTarget].location)
                 {
-                    GameState.enemyFleets.Remove(t);
+                    GameData.enemyFleets.Remove(t);
                 }
             }
             GameState.battleResult = GameState.BattleResult.none;
@@ -49,11 +51,11 @@ public class MapScript : MonoBehaviour
             }
         }
 
-        foreach (var fleet in GameState.enemyFleets.Keys)
+        foreach (var fleet in GameData.enemyFleets.Keys)
         {
             Tile t = fleet1;
 
-            switch (GameState.enemyFleets[fleet].size)
+            switch (GameData.enemyFleets[fleet].size)
             {
                 case 1:
                     t = fleet1;
@@ -64,28 +66,34 @@ public class MapScript : MonoBehaviour
                 case 3:
                     t = fleet3;
                     break;
+                case 4:
+                    t = fleet4;
+                    break;
+                case 5:
+                    t = fleet5;
+                    break;
             }
-            gridFleet.SetTile(GameState.enemyFleets[fleet].location, t);
+            gridFleet.SetTile(GameData.enemyFleets[fleet].location, t);
         }
 
-        gridFleet.SetTile(GameState.playerMapPosition, Player);
+        gridFleet.SetTile(GameData.playerMapPosition, Player);
 
 
-        if ((Input.GetKeyUp(KeyCode.W)|| (Input.GetKeyUp(KeyCode.UpArrow))) && isTileClear(new Vector3Int(GameState.playerMapPosition.x, GameState.playerMapPosition.y + 1)))
+        if ((Input.GetKeyUp(KeyCode.W)|| (Input.GetKeyUp(KeyCode.UpArrow))) && isTileClear(new Vector3Int(GameData.playerMapPosition.x, GameData.playerMapPosition.y + 1)))
         {
-            GameState.playerMapPosition.y++;
+            GameData.playerMapPosition.y++;
         }
-        if ((Input.GetKeyUp(KeyCode.A) || (Input.GetKeyUp(KeyCode.LeftArrow))) && isTileClear(new Vector3Int(GameState.playerMapPosition.x - 1, GameState.playerMapPosition.y)))
+        if ((Input.GetKeyUp(KeyCode.A) || (Input.GetKeyUp(KeyCode.LeftArrow))) && isTileClear(new Vector3Int(GameData.playerMapPosition.x - 1, GameData.playerMapPosition.y)))
         {
-            GameState.playerMapPosition.x--;
+            GameData.playerMapPosition.x--;
         }
-        if ((Input.GetKeyUp(KeyCode.D) || (Input.GetKeyUp(KeyCode.RightArrow))) && isTileClear(new Vector3Int(GameState.playerMapPosition.x + 1, GameState.playerMapPosition.y)))
+        if ((Input.GetKeyUp(KeyCode.D) || (Input.GetKeyUp(KeyCode.RightArrow))) && isTileClear(new Vector3Int(GameData.playerMapPosition.x + 1, GameData.playerMapPosition.y)))
         {
-            GameState.playerMapPosition.x++;
+            GameData.playerMapPosition.x++;
         }
-        if ((Input.GetKeyUp(KeyCode.S) || (Input.GetKeyUp(KeyCode.DownArrow))) && isTileClear(new Vector3Int(GameState.playerMapPosition.x, GameState.playerMapPosition.y - 1)))
+        if ((Input.GetKeyUp(KeyCode.S) || (Input.GetKeyUp(KeyCode.DownArrow))) && isTileClear(new Vector3Int(GameData.playerMapPosition.x, GameData.playerMapPosition.y - 1)))
         {
-            GameState.playerMapPosition.y--;
+            GameData.playerMapPosition.y--;
         }
     }
 
@@ -95,16 +103,17 @@ public class MapScript : MonoBehaviour
 
         if (gridFleet.GetTile(pos) != null)
         {
-            foreach (var fleet in GameState.enemyFleets.Keys)
+            foreach (var fleet in GameData.enemyFleets.Keys)
             {
-                if (GameState.enemyFleets[fleet].location == pos)
+                if (GameData.enemyFleets[fleet].location == pos)
                 {
                     GameState.currentTarget = fleet;
                     break;
                 }
             }
 
-            GameState.fleetSize = GameState.enemyFleets[GameState.currentTarget].size;
+            GameState.fleetSize = GameData.enemyFleets[GameState.currentTarget].size;
+            GameState.fleetLevel = GameData.enemyFleets[GameState.currentTarget].level;
             SceneManager.LoadScene("game");
             return false;
         }

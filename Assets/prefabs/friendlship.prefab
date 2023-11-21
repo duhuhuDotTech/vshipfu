@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
+  maxHealth: 0
   state: 0
   healthBar: {fileID: 3454773598482575738}
   lastFired: 638248943824224461
@@ -155,6 +156,14 @@ MonoBehaviour:
   follow: {fileID: 0}
   sinking: {fileID: 21300000, guid: 1acca1c6688b6a74e8f66e276d36b724, type: 3}
   deadship: {fileID: 21300000, guid: 62d006f023109114db3df4e3c7424988, type: 3}
+  textureShip0: {fileID: 21300000, guid: 255697a6303019445b406b729b9b8b60, type: 3}
+  textureShip1: {fileID: 21300000, guid: f21875b989258cd408f84d84cf9fc1fb, type: 3}
+  textureShip2: {fileID: 21300000, guid: df43928269f28ac44836dfee3ef76eda, type: 3}
+  textureShip3: {fileID: 21300000, guid: bcdc044fca0d591459178d52d3f5cebc, type: 3}
+  textureShip4: {fileID: 0}
+  textureShip5: {fileID: 0}
+  textureShip6: {fileID: 0}
+  shipsprites: []
 --- !u!1001 &3081207294637347533
 PrefabInstance:
   m_ObjectHideFlags: 0

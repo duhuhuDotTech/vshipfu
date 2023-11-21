@@ -1,7 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Playables;
+using TMPro;
 using UnityEngine;
 
 public class Shell : MonoBehaviour
@@ -15,6 +14,8 @@ public class Shell : MonoBehaviour
     public MunitionTypes.shellType shellType;
     public float ymin;
     public long animEnd;
+    public GameObject dmgtext;
+    public float damage;
 
     // Start is called before
     // the first frame update
@@ -88,14 +89,32 @@ public class Shell : MonoBehaviour
                 var e = collision.gameObject.GetComponent<Enemy>();
                 if (e.state == Shipfu.ShipState.Active)
                 {
-                    e.health -= (int)MunitionTypes.shellDamage[shellType];
-                    state = MunitionTypes.shellState.explode;
-                    gameObject.GetComponent<SpriteRenderer>().enabled = false;
-                    gameObject.transform.GetChild(0).gameObject.SetActive(true);
-                    gameObject.transform.GetChild(1).gameObject.SetActive(true);
-                    gameObject.transform.GetChild(2).gameObject.SetActive(true);
-                    gameObject.transform.GetChild(3).gameObject.SetActive(true);
-                    gameObject.transform.GetChild(4).gameObject.SetActive(true);
+
+                    int x = GameState.random.Next(100);
+                    if (x > e.evasion)
+                    {
+
+                        e.health -= s.damage - (1 - (e.armour / 100));
+                        state = MunitionTypes.shellState.explode;
+                        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                        gameObject.transform.GetChild(0).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(1).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(2).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(3).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(4).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(6).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(6).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(((int)s.damage).ToString());
+                    }
+                    else
+                    {
+                        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                        state = MunitionTypes.shellState.slpash;
+                        gameObject.transform.GetChild(5).gameObject.SetActive(true);
+                        animEnd = DateTime.UtcNow.Ticks + Util.TickSecond;
+                        gameObject.transform.GetChild(6).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(6).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Miss");
+                    }
+
                     animEnd = DateTime.UtcNow.Ticks + Util.TickSecond;
                 }
             }
@@ -106,30 +125,63 @@ public class Shell : MonoBehaviour
                 {
                     var p = collision.gameObject.GetComponent<PlayerController>();
 
-                    p.health -= (int)MunitionTypes.shellDamage[shellType];
-                    state = MunitionTypes.shellState.explode;
-                    gameObject.GetComponent<SpriteRenderer>().enabled = false;
-                    gameObject.transform.GetChild(0).gameObject.SetActive(true);
-                    gameObject.transform.GetChild(1).gameObject.SetActive(true);
-                    gameObject.transform.GetChild(2).gameObject.SetActive(true);
-                    gameObject.transform.GetChild(3).gameObject.SetActive(true);
-                    gameObject.transform.GetChild(4).gameObject.SetActive(true);
-                    animEnd = DateTime.UtcNow.Ticks + Util.TickSecond;
+                    int x = GameState.random.Next(100);
+                    if (x > GameData.shipfus[GameData.activeFleet[0]].evasion)
+                    {
+
+                        GameData.shipfus[GameData.activeFleet[0]].health -= s.damage - GameData.shipfus[GameData.activeFleet[0]].armour;
+                        state = MunitionTypes.shellState.explode;
+                        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                        gameObject.transform.GetChild(0).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(1).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(2).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(3).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(4).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(6).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(6).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(((int)s.damage).ToString());
+                        animEnd = DateTime.UtcNow.Ticks + Util.TickSecond;
+                    }
+
+                    else
+                    {
+                        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                        state = MunitionTypes.shellState.slpash;
+                        gameObject.transform.GetChild(5).gameObject.SetActive(true);
+                        animEnd = DateTime.UtcNow.Ticks + Util.TickSecond;
+                        gameObject.transform.GetChild(6).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(6).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Miss");
+                    }
                 }
 
                 if (collision.gameObject.GetComponent<FriendShip>())
                 {
-                    var p = collision.gameObject.GetComponent<FriendShip>();
+                    var f = collision.gameObject.GetComponent<FriendShip>();
 
-                    p.health -= (int)MunitionTypes.shellDamage[shellType];
-                    state = MunitionTypes.shellState.explode;
-                    gameObject.GetComponent<SpriteRenderer>().enabled = false;
-                    gameObject.transform.GetChild(0).gameObject.SetActive(true);
-                    gameObject.transform.GetChild(1).gameObject.SetActive(true);
-                    gameObject.transform.GetChild(2).gameObject.SetActive(true);
-                    gameObject.transform.GetChild(3).gameObject.SetActive(true);
-                    gameObject.transform.GetChild(4).gameObject.SetActive(true);
-                    animEnd = DateTime.UtcNow.Ticks + Util.TickSecond;
+                    int x = GameState.random.Next(100);
+                    if (x > GameData.shipfus[f.shipfuid].evasion)
+                    {
+
+                        f.health -= (int)s.damage - GameData.shipfus[f.shipfuid].armour;
+                        state = MunitionTypes.shellState.explode;
+                        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                        gameObject.transform.GetChild(0).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(1).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(2).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(3).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(4).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(6).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(6).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(((int)s.damage).ToString());
+                        animEnd = DateTime.UtcNow.Ticks + Util.TickSecond;
+                    }
+                    else
+                    {
+                        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+                        state = MunitionTypes.shellState.slpash;
+                        gameObject.transform.GetChild(5).gameObject.SetActive(true);
+                        animEnd = DateTime.UtcNow.Ticks + Util.TickSecond;
+                        gameObject.transform.GetChild(6).gameObject.SetActive(true);
+                        gameObject.transform.GetChild(6).GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Miss");
+                    }
                 }
             }
         }

@@ -15,9 +15,6 @@ EditorBuildSettings:
     path: Assets/Scenes/map.unity
     guid: 47c601367748ee54da3c6da47175e7c7
   - enabled: 1
-    path: Assets/Scenes/settings.unity
-    guid: 1d3bc4ff58f22cd47b7e9ab6fa8071dc
-  - enabled: 1
     path: Assets/Scenes/gacha.unity
     guid: 3ad60af6944002f46b036a5d9db62ee6
   - enabled: 1
@@ -26,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/battleend.unity
     guid: 27b8952f2dd7de14fb3b5cb944f94d15
+  - enabled: 1
+    path: Assets/Scenes/enhance.unity
+    guid: da445b8b7dd1fd74083be113908d594c
   m_configObjects: {}

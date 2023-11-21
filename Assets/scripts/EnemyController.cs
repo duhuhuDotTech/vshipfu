@@ -28,7 +28,7 @@ public class EnemyController : MonoBehaviour
         if (DateTime.Now.Ticks > startTime + 200000000 && wave < GameState.fleetSize * GameState.fleetSize)
         {
             startTime = DateTime.Now.Ticks;
-            spawnFleet(GameState.fleetSize);
+            spawnFleet(GameState.fleetSize,GameState.fleetLevel);
             wave++;
         }
 
@@ -47,9 +47,21 @@ public class EnemyController : MonoBehaviour
             SceneManager.LoadScene("battleend");
         }
 
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            if (enemies[i] != null)
+            {
+                if (enemies[i].transform.position.x < -10)
+                {
+                    GameState.battleResult = GameState.BattleResult.loss;
+                    SceneManager.LoadScene("map");
+                }
+            }
+        }
+
     }
 
-    void spawnFleet(int size)
+    void spawnFleet(int size, int level)
     {
         int x = random.Next(size / 2, size) + size / 4;
 
@@ -62,6 +74,8 @@ public class EnemyController : MonoBehaviour
                 Enemy e = e1.GetComponent<Enemy>();
                 e.acceleration = new Vector3(-0.5f, 0, 0);
                 e.transform.position += new Vector3((float)+i * 6, -2f);
+                e.level = level;
+                e.initEnemy();
                 enemies.Add(e1);
                 GameState.battleSize++;
             }
@@ -72,16 +86,22 @@ public class EnemyController : MonoBehaviour
                 Enemy e = e1.GetComponent<Enemy>();
                 e.acceleration = new Vector3(-0.5f, 0, 0);
                 e.transform.position += new Vector3((float)+i * 6, -0f);
+                e.level = level;
+                e.initEnemy();
                 enemies.Add(e1);
                 e1 = Instantiate(enemy1, SpawnPoint.transform);
                 e1.transform.position += new Vector3((float)+i * 6, -2f);
                 e = e1.GetComponent<Enemy>();
                 e.acceleration = new Vector3(-0.5f, 0, 0);
+                e.level = level;
+                e.initEnemy();
                 enemies.Add(e1);
                 e1 = Instantiate(enemy1, SpawnPoint.transform);
                 e1.transform.position += new Vector3((float)+i * 6, 2f);
                 e = e1.GetComponent<Enemy>();
                 e.acceleration = new Vector3(-0.5f, 0, 0);
+                e.level = level;
+                e.initEnemy();
                 enemies.Add(e1);
                 GameState.battleSize += 3;
             }
@@ -92,26 +112,36 @@ public class EnemyController : MonoBehaviour
                 Enemy e = e1.GetComponent<Enemy>();
                 e.acceleration = new Vector3(-0.5f, 0, 0);
                 e.transform.position += new Vector3((float)+i * 6, -0f);
+                e.level = level;
+                e.initEnemy();
                 enemies.Add(e1);
                 e1 = Instantiate(enemy1, SpawnPoint.transform);
                 e1.transform.position += new Vector3((float)+i * 6, -3f);
                 e = e1.GetComponent<Enemy>();
                 e.acceleration = new Vector3(-0.5f, 0, 0);
+                e.level = level;
+                e.initEnemy();
                 enemies.Add(e1);
                 e1 = Instantiate(enemy1, SpawnPoint.transform);
                 e1.transform.position += new Vector3((float)+i * 6, -1f);
                 e = e1.GetComponent<Enemy>();
                 e.acceleration = new Vector3(-0.5f, 0, 0);
+                e.level = level;
+                e.initEnemy();
                 enemies.Add(e1);
                 e1 = Instantiate(enemy1, SpawnPoint.transform);
                 e1.transform.position += new Vector3((float)+i * 6, 1f);
                 e = e1.GetComponent<Enemy>();
                 e.acceleration = new Vector3(-0.5f, 0, 0);
+                e.level = level;
+                e.initEnemy();
                 enemies.Add(e1);
                 e1 = Instantiate(enemy1, SpawnPoint.transform);
                 e1.transform.position += new Vector3((float)+i * 6, 3f);
                 e = e1.GetComponent<Enemy>();
                 e.acceleration = new Vector3(-0.5f, 0, 0);
+                e.level = level;
+                e.initEnemy();
                 enemies.Add(e1);
                 GameState.battleSize += 5;
             }

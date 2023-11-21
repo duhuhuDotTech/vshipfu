@@ -16,18 +16,18 @@ public class UIClick : MonoBehaviour
 
     public void AddtoFleet()
     {
-        if(!GameState.gameData.activeFleet.Contains(FleetSceneScript.selectedShip))
+        if(!GameData.activeFleet.Contains(FleetSceneScript.selectedShip))
         {
-            GameState.gameData.activeFleet.Add(FleetSceneScript.selectedShip);
+            GameData.activeFleet.Add(FleetSceneScript.selectedShip);
         }
         FleetSceneScript.UpdateFleet();
     }
 
     public void RemoveFromFleet()
     {
-        if (GameState.gameData.activeFleet.Contains(FleetSceneScript.selectedShip))
+        if (GameData.activeFleet.Contains(FleetSceneScript.selectedShip))
         {
-            GameState.gameData.activeFleet.Remove(FleetSceneScript.selectedShip);
+            GameData.activeFleet.Remove(FleetSceneScript.selectedShip);
         }
         FleetSceneScript.UpdateFleet();
     }

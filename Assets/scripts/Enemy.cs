@@ -3,13 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using static Shipfu;
 using Random = UnityEngine.Random;
 //using Random = System.Random;
 
 public class Enemy : MonoBehaviour
 {
     // Start is called before the first frame update
-    public int health = 100;
+    public float health = 10;
     public Shipfu.ShipState state;
     public HealthBar healthBar;
     public Sprite sinking;
@@ -19,12 +20,24 @@ public class Enemy : MonoBehaviour
     private long lastFired = DateTime.Now.Ticks;
     public GameObject shell1;
     public GameObject pickup;
+    public float armour;
+    public float evasion;
+    public int level;
+    public float damage;
 
     void Start()
     {
         healthBar.SetMaxHealth(health);
         healthBar.SetHealth(health);
         state = Shipfu.ShipState.Active;
+    }
+
+    public void initEnemy()
+    {
+        armour = level;
+        evasion = level;
+        damage = 20 + level;
+        health = 100 + (level*5);
     }
 
     // Update is called once per frame
@@ -63,7 +76,7 @@ public class Enemy : MonoBehaviour
         {
             long a = (long)Random.Range(60000000, 75000000);
             Debug.Log(a);
-            lastFired = DateTime.Now.Ticks +a;
+            lastFired = DateTime.Now.Ticks + a;
 
             GameObject shell = Instantiate(shell1, gameObject.transform.parent);
 
@@ -78,6 +91,9 @@ public class Enemy : MonoBehaviour
             s.ownerid = 1;
             s.type = 0;
             s.ymin = shell.transform.position.y;
+            s.damage = damage;
+            
+
         }
     }
 

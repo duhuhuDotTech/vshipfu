@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,51 +12,61 @@ public class MenuScript : MonoBehaviour
 
     public void SortieButton()
     {
-        GameState.enemyFleets = new Dictionary<System.Guid, EnemyFleet>();
-
-        var ef = new EnemyFleet();
-        ef.alive = true;
-        ef.location = new Vector3Int(-7, 0);
-        ef.size = 1;
-        GameState.enemyFleets.Add(Guid.NewGuid(), ef);
-
-        ef = new EnemyFleet();
-        ef.alive = true;
-        ef.location = new Vector3Int(-7, -1);
-        ef.size = 2;
-        GameState.enemyFleets.Add(Guid.NewGuid(), ef);
-
-        ef = new EnemyFleet();
-        ef.alive = true;
-        ef.location = new Vector3Int(-7, -2);
-        ef.size = 3;
-        GameState.enemyFleets.Add(Guid.NewGuid(), ef);
-
-        GameState.playerMapPosition = new Vector3Int(-8, -4);
-
-        SceneManager.LoadScene("map");
+        GameState.setupWorld();
+        SceneManager.LoadScene("map", LoadSceneMode.Single);
     }
 
     public void GoToFleetButton()
     {
-        SceneManager.LoadScene("fleet");
+        SceneManager.LoadScene("fleet", LoadSceneMode.Single);
     }
 
     public void GoToMapButton()
     {
-        SceneManager.LoadScene("map");
+        SceneManager.LoadScene("map", LoadSceneMode.Single);
     }
-        
+
+    public void ReturnToMapButton()
+    {
+        SceneManager.LoadScene("map", LoadSceneMode.Single);
+    }
+
+    public void GoToMapGacha()
+    {
+        SceneManager.LoadScene("gacha", LoadSceneMode.Single);
+    }
+
+    public void GoToMainMenu()
+    {
+        SceneManager.LoadScene("menu", LoadSceneMode.Single);
+    }
+
+    public void GoToEnhance()
+    {
+        SceneManager.LoadScene("enhance", LoadSceneMode.Single);
+    }
+
+    public void exit()
+    {
+        UnityEngine.Application.Quit();
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        saveManager.LoadGame();
+        if (GameData.shipfus.Count == 0)
+        {
+            GameData.InitGameData();
+        }
+        //saveManager.LoadGame();
+        long t = DateTime.Now.Ticks;
+        int x = (int)(t % 18980);
+        GameState.random = new System.Random(x);
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 }

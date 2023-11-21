@@ -7,7 +7,7 @@ public class FleetScript: MonoBehaviour
     // Start is called before the first frame update    
 
     SaveManager saveManager;
-    GameData gameData;
+
     void Start()
     {
        saveManager.LoadGame();

@@ -9,9 +9,6 @@ using UnityEngine;
 public class Main : MonoBehaviour
 {
 
-    public GameObject fiendShip;
-    public GameObject pipShip;
-
     void Start()
     {
         init();

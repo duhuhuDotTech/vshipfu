@@ -44,27 +44,25 @@ public class Plane : MonoBehaviour
             gameObject.transform.GetChild(4).transform.position += new Vector3(-0.5f * Time.deltaTime, 1 * Time.deltaTime);
         }
 
-        if(gameObject.transform.position.x>xmax)
+        if (gameObject.transform.position.x > xmax)
         {
             Destroy(gameObject);
         }
 
-        if(DateTime.Now.Ticks > lastFired + 2000000)
+        if (DateTime.Now.Ticks > lastFired + 2000000)
         {
             lastFired = DateTime.Now.Ticks;
 
-                GameObject bomb = Instantiate(bomb1, gameObject.transform.parent);
-
-          
+            GameObject bomb = Instantiate(bomb1, gameObject.transform.parent);
             bomb.transform.position = gameObject.transform.position;
             bomb.SetActive(true);
 
             var b = bomb.GetComponent<Bomb>();
 
-                b.ownerid = 0;
-                b.type = 0;
+            b.ownerid = 0;
+            b.type = 0;
             b.acceleration = new Vector3(0, 1, 0);
-            b.ymin = r.Next(-5, 0); 
+            b.ymin = r.Next(-5, 0);
 
 
         }

@@ -30,10 +30,10 @@ public class Pickup : MonoBehaviour
             {
                 active = false;
                 gameObject.GetComponent<SpriteRenderer>().enabled = false;
-                collision.gameObject.GetComponent<PlayerController>().health += 20;
-                if (collision.gameObject.GetComponent<PlayerController>().health > collision.gameObject.GetComponent<PlayerController>().maxhealth)
+                GameData.shipfus[GameData.activeFleet[0]].health += 20;
+                if (GameData.shipfus[GameData.activeFleet[0]].health > GameData.shipfus[GameData.activeFleet[0]].maxhealth)
                 {
-                    collision.gameObject.GetComponent<PlayerController>().health = collision.gameObject.GetComponent<PlayerController>().maxhealth;
+                    GameData.shipfus[GameData.activeFleet[0]].health = GameData.shipfus[GameData.activeFleet[0]].maxhealth;
                 }
 
             }

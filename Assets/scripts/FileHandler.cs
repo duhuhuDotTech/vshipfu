@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.IO;
+using Newtonsoft.Json;
+using System.Net;
 
 public static class FileHandler
 {
-    public static GameData Load(string filename)
+    public static void Load(string filename)
     {
         string path = Path.Combine(Application.persistentDataPath, filename);
-        GameData loadedData = null;
         if (File.Exists(path))
         {
             try
@@ -24,27 +25,43 @@ public static class FileHandler
                     }
                 }
 
-                loadedData = JsonUtility.FromJson<GameData>(datatoload);
+                GameDataNonStaticLOL loadedData = JsonConvert.DeserializeObject<GameDataNonStaticLOL>(datatoload);
 
+                GameData.enemyFleets = loadedData.enemyFleets;
+                GameData.activeFleet = loadedData.activeFleet;
+                GameData.mapPositon = loadedData.mapPositon;
+                GameData.shipfus = loadedData.shipfus;
+                GameData.Shards = loadedData.Shards;
+                GameData.playerMapPosition = loadedData.playerMapPosition;
+
+                //copy to static here
             }
             catch (Exception e)
             {
                 Debug.LogError("oh fuck loading is absolutely shitted");
             }
         }
-        return loadedData;
+
     }
 
     public static void Save(string fileName)
     {
         string path = Path.Combine(Application.persistentDataPath, fileName);
 
+        //copy to non static here
+        GameDataNonStaticLOL gdnsl = new GameDataNonStaticLOL();
+        gdnsl.enemyFleets = GameData.enemyFleets;
+        gdnsl.activeFleet = GameData.activeFleet;
+        gdnsl.mapPositon = GameData.mapPositon;
+        gdnsl.shipfus = GameData.shipfus;
+        gdnsl.Shards = GameData.Shards;
+        gdnsl.playerMapPosition = GameData.playerMapPosition;
+
         try
         {
             Directory.CreateDirectory(Path.GetDirectoryName(path));
 
-            string dataToStore = JsonUtility.ToJson(GameState.gameData, true);
-            string data2 = JsonUtility.ToJson(GameState.gameData.shipfus, true);
+            string dataToStore = JsonConvert.SerializeObject(gdnsl);
             using (FileStream stream = new FileStream(path, FileMode.Create))
             {
                 using (StreamWriter writer = new StreamWriter(stream))

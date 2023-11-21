@@ -7,7 +7,6 @@ using UnityEngine;
 using UnityEngine.Device;
 using static Enemy;
 using UnityEngine.UI;
-using TMPro;
 using Unity.Mathematics;
 using UnityEngine.SceneManagement;
 using Unity.VisualScripting;
@@ -15,8 +14,6 @@ using System.Xml.Linq;
 
 public class PlayerController : MonoBehaviour
 {
-    // Start is called before the first frame update
-
     float speed = 3f;
     long lastFired = DateTime.Now.Ticks;
     long skill1LastUse = DateTime.Now.Ticks;
@@ -31,9 +28,6 @@ public class PlayerController : MonoBehaviour
 
     public GameObject AirSpawnLocation;
 
-    public int health = 100;
-    public int maxhealth = 100;
-
     public Image imageShellCoolDown;
     public TMP_Text textShellCoolDown;
 
@@ -45,26 +39,29 @@ public class PlayerController : MonoBehaviour
 
     public GameObject friendShip;
 
-    public Dictionary<int, FriendShip> friendFleet = new Dictionary<int, FriendShip>();
+    public List<GameObject> friendFleet = new List<GameObject>();
 
     void Start()
     {
-        healthBar.SetMaxHealth(health);
+        healthBar.SetMaxHealth((int)GameData.shipfus[GameData.activeFleet[0]].maxhealth);
+
         textShellCoolDown.gameObject.SetActive(false);
         imageShellCoolDown.fillAmount = 0;
 
+        GameData.shipfus[GameData.activeFleet[0]].health = GameData.shipfus[GameData.activeFleet[0]].maxhealth;
+
         // get the 
         GameObject last = gameObject;
-        if (GameState.gameData.activeFleet.Count > 0)
+
+        if (GameData.activeFleet.Count > 0)
         {
-            for (int i = 0; i < GameState.gameData.activeFleet.Count; i++)
+            for (int i = 1; i < GameData.activeFleet.Count; i++)
             {
                 var f = Instantiate(friendShip);
                 f.transform.position = new Vector3(last.transform.position.x - 1, last.transform.position.y, last.transform.position.z);
-                var fs = new FriendShip();last = f;
-                fs.follow = last;
-                friendFleet.Add(friendFleet.Keys.Count, fs);
-                
+                var x = f.GetComponent<FriendShip>();
+                x.initShipfu(GameData.activeFleet[i]);
+                friendFleet.Add(f);
             }
         }
     }
@@ -72,22 +69,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        healthBar.SetHealth(health);
-        if (health <= 0)
+        healthBar.SetHealth((int)GameData.shipfus[GameData.activeFleet[0]].health);
+        if (GameData.shipfus[GameData.activeFleet[0]].health <= 0)
         {
-            //  state = ShipState.Sinking;
-            //  GetComponent<SpriteRenderer>().sprite = sinking;
-            //  sinkAnimCount--;
+            Destroy(gameObject);
 
-            //  if (sinkAnimCount < 0)
-            //  {
-            //      state = ShipState.Dead;
-            //      GetComponent<SpriteRenderer>().sprite = deadship;
-            //  }
-            //  if (sinkAnimCount < -1000)
-            {
-                Destroy(gameObject);
-            }
             GameState.battleResult = GameState.BattleResult.loss;
             SceneManager.LoadScene("map");
         }
@@ -106,9 +92,6 @@ public class PlayerController : MonoBehaviour
             textShellCoolDown.gameObject.SetActive(false);
             imageShellCoolDown.fillAmount = 0;
         }
-
-
-
 
         if (DateTime.Now.Ticks < skill1LastUse + Util.TickSecond * 10)
         {
@@ -151,28 +134,28 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            if (gameObject.transform.position.y < 4 + speed * Time.deltaTime)
+            if (gameObject.transform.position.y < 4 + (speed * 1 + (GameData.shipfus[GameData.activeFleet[0]].speed / 100)) * Time.deltaTime)
             {
                 move.y += speed * Time.deltaTime;
             }
         }
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
-            if (gameObject.transform.position.x > -9 - speed * Time.deltaTime)
+            if (gameObject.transform.position.x > -9 - (speed * 1 + (GameData.shipfus[GameData.activeFleet[0]].speed / 100)) * Time.deltaTime)
             {
                 move.x -= speed * Time.deltaTime;
             }
         }
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
-            if (gameObject.transform.position.x < 9 + speed * Time.deltaTime)
+            if (gameObject.transform.position.x < 9 + (speed * 1 + (GameData.shipfus[GameData.activeFleet[0]].speed / 100)) * Time.deltaTime)
             {
                 move.x += speed * Time.deltaTime;
             }
         }
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
         {
-            if (gameObject.transform.position.y > -4 - speed * Time.deltaTime)
+            if (gameObject.transform.position.y > -4 - (speed * 1 + (GameData.shipfus[GameData.activeFleet[0]].speed / 100)) * Time.deltaTime)
             {
                 move.y -= speed * Time.deltaTime;
             }
@@ -198,33 +181,56 @@ public class PlayerController : MonoBehaviour
 
         for (int i = 0; i < friendFleet.Count; i++)
         {
-            GameObject g;
-            if (i == 0)
+            if (friendFleet[i] != null)
             {
-                g = gameObject;
-            }
-            else
-            {
-                g = friendFleet[i - 1].follow;
-            }
+                GameObject g;
+                if (i == 0)
+                {
+                    g = gameObject;
+                }
+                else
+                {
+                    g = friendFleet[i - 1];
 
-            var dist = Vector3.Distance(g.transform.position, friendFleet[i].follow.transform.position);
-            if (dist > 1 || dist < -1)
-            {
-                var x = (g.transform.position - new Vector3(-0.5f, 0) - friendFleet[i].follow.transform.position).normalized;
-                friendFleet[i].follow.transform.Translate(x * Time.deltaTime * 2);
+                    if (g == null)
+                    {
+                        g = findFollow(i);
+                    }
+                }
+
+                var dist = Vector3.Distance(g.transform.position, friendFleet[i].transform.position);
+                if (dist > 1 || dist < -1)
+                {
+                    var x = (g.transform.position - new Vector3(-0.5f, 0) - friendFleet[i].transform.position).normalized;
+                    var f = friendFleet[i].GetComponent<FriendShip>();
+                    friendFleet[i].transform.Translate((x * Time.deltaTime * 2) * (1 + (GameData.shipfus[f.shipfuid].speed / 100)));
+                }
             }
         }
     }
 
+    GameObject findFollow(int index)
+    {
+        for (int i = index - 1; i >= 0; i--)
+        {
+            if (friendFleet[i] != null)
+            {
+                return friendFleet[i].gameObject;
+            }
+        }
+
+        return gameObject;
+    }
+
     void autoFire()
     {
-        if (DateTime.Now.Ticks > autoshotLastUse + Util.TickSecond / 3)
+        double x = (1 - (GameData.shipfus[GameData.activeFleet[0]].reload / 100));
+        var y = ((Util.TickSecond / 2) * (1 - (GameData.shipfus[GameData.activeFleet[0]].reload / 100)));
+        var p = DateTime.Now.Ticks > autoshotLastUse + ((Util.TickSecond / 2) * (1 - (GameData.shipfus[GameData.activeFleet[0]].reload / 100)));
+        if (DateTime.Now.Ticks > autoshotLastUse + ((Util.TickSecond / 2) * x))
         {
             autoshotLastUse = DateTime.Now.Ticks;
-
             GameObject shell1 = Instantiate(autoShell, gameObject.transform.parent);
-
 
             shell1.transform.localScale = new Vector3(0.5f, 0.5f);
             shell1.transform.position = gameObject.transform.position;
@@ -236,6 +242,8 @@ public class PlayerController : MonoBehaviour
             s.type = 0;
             s.ymin = -1000;
             s.shellType = MunitionTypes.shellType.secondary;
+            s.damage = MunitionTypes.shellDamage[s.shellType] * (1 + (GameData.shipfus[GameData.activeFleet[0]].damage / 100));
+
 
             GameObject shell2 = Instantiate(autoShell, gameObject.transform.parent);
             shell2.transform.localScale = new Vector3(0.5f, 0.5f);
@@ -248,6 +256,7 @@ public class PlayerController : MonoBehaviour
             s.type = 0;
             s.ymin = -1000;
             s.shellType = MunitionTypes.shellType.secondary;
+            s.damage = MunitionTypes.shellDamage[s.shellType] * (1 + (GameData.shipfus[GameData.activeFleet[0]].damage / 100));
 
             GameObject shell3 = Instantiate(autoShell, gameObject.transform.parent);
             shell3.transform.localScale = new Vector3(0.5f, 0.5f);
@@ -260,12 +269,14 @@ public class PlayerController : MonoBehaviour
             s.type = 0;
             s.ymin = -1000;
             s.shellType = MunitionTypes.shellType.secondary;
+            s.damage = MunitionTypes.shellDamage[s.shellType] * (1 + (GameData.shipfus[GameData.activeFleet[0]].damage / 100));
         }
     }
 
     void Fire()
     {
-        if (DateTime.Now.Ticks > lastFired + Util.TickSecond)
+        double x = (1 - (GameData.shipfus[GameData.activeFleet[0]].reload / 100));
+        if (DateTime.Now.Ticks > lastFired + (Util.TickSecond * x))
         {
             lastFired = DateTime.Now.Ticks;
 
@@ -281,12 +292,14 @@ public class PlayerController : MonoBehaviour
             s.type = 0;
             s.ymin = shell.transform.position.y;
             s.shellType = MunitionTypes.shellType.primary;
+            s.damage = MunitionTypes.shellDamage[s.shellType] * (1 + (GameData.shipfus[GameData.activeFleet[0]].damage / 100));
         }
     }
 
     void FireSkill1()
     {
-        if (DateTime.Now.Ticks > skill1LastUse + Util.TickSecond * 10)
+        double x = (1 - (GameData.shipfus[GameData.activeFleet[0]].reload / 100));
+        if (DateTime.Now.Ticks > skill1LastUse + (Util.TickSecond * 10 * x))
         {
             skill1LastUse = DateTime.Now.Ticks;
 
@@ -303,13 +316,16 @@ public class PlayerController : MonoBehaviour
 
             t.ownerid = 0;
             t.type = 0;
+            t.damage = MunitionTypes.shellDamage[t.shellType] * (1 + (GameData.shipfus[GameData.activeFleet[0]].damage / 100));
+
 
         }
     }
 
     void FireSkill2()
     {
-        if (DateTime.Now.Ticks > skill2LastUse + Util.TickSecond * 10)
+        double x = (1 - (GameData.shipfus[GameData.activeFleet[0]].reload / 100));
+        if (DateTime.Now.Ticks > skill2LastUse + (Util.TickSecond * 10 * x))
         {
             skill2LastUse = DateTime.Now.Ticks;
 
@@ -336,7 +352,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.GetComponent<Enemy>())
         {
             var e = collision.gameObject.GetComponent<Enemy>();
-            health -= e.health;
+            GameData.shipfus[GameData.activeFleet[0]].health -= e.health;
             e.health = 0;
         }
     }

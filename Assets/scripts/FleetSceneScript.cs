@@ -1,14 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static Shipfu;
-using static UnityEditor.Progress;
 
 public class FleetSceneScript : MonoBehaviour
 {
@@ -27,9 +23,13 @@ public class FleetSceneScript : MonoBehaviour
     public Sprite textureRank11;
     public Sprite textureRank12;
 
+    public Sprite textureShip0;
     public Sprite textureShip1;
     public Sprite textureShip2;
     public Sprite textureShip3;
+    public Sprite textureShip4;
+    public Sprite textureShip5;
+    public Sprite textureShip6;
 
     static List<GameObject> shipfuListItems = new List<GameObject>();
     static List<GameObject> fleetList = new List<GameObject>();
@@ -39,37 +39,25 @@ public class FleetSceneScript : MonoBehaviour
 
     public static GameObject detailImage;
     public static GameObject detailRankImage;
-    public static Slider detailSliderDamage;
     public static GameObject detailTextDamage;
-    public static Slider detailSliderSpeed;
     public static GameObject detailTextSpeed;
-    public static Slider detailSliderArmour;
     public static GameObject detailTextArmour;
-    public static Slider detailSliderReload;
     public static GameObject detailTextReload;
 
     public GameObject _detailImage;
     public GameObject _detailRankImage;
-    public Slider _detailSliderDamage;
     public GameObject _detailTextDamage;
-    public Slider _detailSliderSpeed;
     public GameObject _detailTextSpeed;
-    public Slider _detailSliderArmour;
     public GameObject _detailTextArmour;
-    public Slider _detailSliderReload;
     public GameObject _detailTextReload;
 
     void Start()
     {
         detailImage = _detailImage;
         detailRankImage = _detailRankImage;
-        detailSliderDamage = _detailSliderDamage;
         detailTextDamage = _detailTextDamage;
-        detailSliderSpeed = _detailSliderSpeed;
         detailTextSpeed = _detailTextSpeed;
-        detailSliderArmour = _detailSliderArmour;
         detailTextArmour = _detailTextArmour;
-        detailSliderReload = _detailSliderReload;
         detailTextReload = _detailTextReload;
 
         rankSprites.Add(textureRank1);
@@ -85,6 +73,7 @@ public class FleetSceneScript : MonoBehaviour
         rankSprites.Add(textureRank11);
         rankSprites.Add(textureRank12);
 
+        shipfuSprites.Add(textureShip0);
         shipfuSprites.Add(textureShip1);
         shipfuSprites.Add(textureShip2);
         shipfuSprites.Add(textureShip3);
@@ -94,11 +83,8 @@ public class FleetSceneScript : MonoBehaviour
 
     public static void UpdateFleet()
     {
-
-
-
-        List<Guid> shipfus = GameState.gameData.shipfus.Keys.ToList();
-        List<Guid> fleet = GameState.gameData.activeFleet;
+        List<Guid> shipfus = GameData.shipfus.Keys.ToList();
+        List<Guid> fleet = GameData.activeFleet;
 
         for (int i = 1; i <= 15; i++)
         {
@@ -110,12 +96,12 @@ public class FleetSceneScript : MonoBehaviour
         {
             var y = shipfuListItems[ii].transform.Find("TxtClass");
             var t = y.GetComponentInChildren<TextMeshProUGUI>();
-            t.SetText(GameState.gameData.shipfus[item].shipType.ToString());
+            t.SetText(GameData.shipfus[item].shipType.ToString());
             y = shipfuListItems[ii].transform.Find("TxtName");
             t = y.GetComponentInChildren<TextMeshProUGUI>();
-            t.SetText(GameState.gameData.shipfus[item].shipID.ToString());
+            t.SetText(GameData.shipfus[item].shipID.ToString());
             y = shipfuListItems[ii].transform.Find("Image");
-            y.gameObject.GetComponent<Image>().sprite = rankSprites[(int)GameState.gameData.shipfus[item].shipWeight];
+            y.gameObject.GetComponent<Image>().sprite = rankSprites[(int)GameData.shipfus[item].shipWeight];
             ii++;
         }
 
@@ -132,10 +118,10 @@ public class FleetSceneScript : MonoBehaviour
         foreach (var item in fleet)
         {
             var y = fleetList[ii].transform.Find("rankImage");
-            y.gameObject.GetComponent<Image>().sprite = rankSprites[(int)GameState.gameData.shipfus[item].shipWeight];
+            y.gameObject.GetComponent<Image>().sprite = rankSprites[(int)GameData.shipfus[item].shipWeight];
 
             y = fleetList[ii].transform.Find("shipfuImage");
-            y.gameObject.GetComponent<Image>().sprite = shipfuSprites[(int)GameState.gameData.shipfus[item].shipID];
+            y.gameObject.GetComponent<Image>().sprite = shipfuSprites[(int)GameData.shipfus[item].shipID];
             ii++;
         }
 
@@ -149,16 +135,21 @@ public class FleetSceneScript : MonoBehaviour
 
     public static void updateDetails(int Id)
     {
-        if (GameState.gameData.shipfus.Count > Id)
+        if (GameData.shipfus.Count > Id)
         {
             int ii = 0;
-            foreach (var item in GameState.gameData.shipfus.Keys.ToList())
+            foreach (var item in GameData.shipfus.Keys.ToList())
             {
                 if (ii == Id)
                 {
                     selectedShip = item;
-                    detailImage.gameObject.GetComponent<Image>().sprite = shipfuSprites[(int)GameState.gameData.shipfus[item].shipID];
-                    detailRankImage.gameObject.GetComponent<Image>().sprite = rankSprites[(int)GameState.gameData.shipfus[item].shipWeight];
+                    detailImage.gameObject.GetComponent<Image>().sprite = shipfuSprites[(int)GameData.shipfus[item].shipID];
+                    detailRankImage.gameObject.GetComponent<Image>().sprite = rankSprites[(int)GameData.shipfus[item].shipWeight];
+
+                    detailTextDamage.GetComponent<TextMeshProUGUI>().SetText("Damage: " + GameData.shipfus[item].damage);
+                    detailTextArmour.GetComponent<TextMeshProUGUI>().SetText("Armour: " + GameData.shipfus[item].armour);
+                    detailTextReload.GetComponent<TextMeshProUGUI>().SetText("Reload: " + GameData.shipfus[item].reload);
+                    detailTextSpeed.GetComponent<TextMeshProUGUI>().SetText("Speed: " + GameData.shipfus[item].speed);
                 }
                 ii++;
             }
@@ -167,16 +158,21 @@ public class FleetSceneScript : MonoBehaviour
 
     public static void updateDetailsFleet(int Id)
     {
-        if (GameState.gameData.shipfus.Count > Id)
+        if (GameData.shipfus.Count > Id)
         {
             int ii = 0;
-            foreach (var item in GameState.gameData.activeFleet)
+            foreach (var item in GameData.activeFleet)
             {
                 if (ii == Id)
                 {
                     selectedShip = item;
-                    detailImage.gameObject.GetComponent<Image>().sprite = shipfuSprites[(int)GameState.gameData.shipfus[item].shipID];
-                    detailRankImage.gameObject.GetComponent<Image>().sprite = rankSprites[(int)GameState.gameData.shipfus[item].shipWeight];
+                    detailImage.gameObject.GetComponent<Image>().sprite = shipfuSprites[(int)GameData.shipfus[item].shipID];
+                    detailRankImage.gameObject.GetComponent<Image>().sprite = rankSprites[(int)GameData.shipfus[item].shipWeight];
+
+                    detailTextDamage.GetComponent<TextMeshProUGUI>().SetText("Damage: " + GameData.shipfus[item].damage);
+                    detailTextArmour.GetComponent<TextMeshProUGUI>().SetText("Armour: " + GameData.shipfus[item].armour);
+                    detailTextReload.GetComponent<TextMeshProUGUI>().SetText("Reload: " + GameData.shipfus[item].reload);
+                    detailTextSpeed.GetComponent<TextMeshProUGUI>().SetText("Speed: " + GameData.shipfus[item].speed);
                 }
                 ii++;
             }
