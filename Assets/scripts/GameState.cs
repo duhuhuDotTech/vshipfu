@@ -59,14 +59,14 @@ public static class GameState
             ef.alive = true;
             ef.location = new Vector3Int(-7, 0);
             ef.size = 1;
-            ef.level = 100;
+            ef.level = 20;
             GameData.enemyFleets.Add(Guid.NewGuid(), ef);
 
             ef = new EnemyFleet();
             ef.alive = true;
             ef.location = new Vector3Int(-8, 0);
             ef.size = 1;
-            ef.level = 100;
+            ef.level = 20;
             GameData.enemyFleets.Add(Guid.NewGuid(), ef);
 
             ef = new EnemyFleet();

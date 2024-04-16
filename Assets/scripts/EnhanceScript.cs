@@ -27,11 +27,14 @@ public class EnhanceScript : MonoBehaviour
     public Sprite textureShip1;
     public Sprite textureShip2;
     public Sprite textureShip3;
+    public Sprite textureShip4;
+    public Sprite textureShip5;
 
     static List<GameObject> shipfuListItems = new List<GameObject>();
-    static List<GameObject> fleetList = new List<GameObject>();
     static List<Sprite> rankSprites = new List<Sprite>();
     static List<Sprite> shipfuSprites = new List<Sprite>();
+    static List<Guid> shipIds = new List<Guid>();
+
     int topofList = 0;
 
     public static GameObject detailImage;
@@ -73,6 +76,9 @@ public class EnhanceScript : MonoBehaviour
         shipfuSprites.Add(textureShip1);
         shipfuSprites.Add(textureShip2);
         shipfuSprites.Add(textureShip3);
+        shipfuSprites.Add(textureShip4);
+        shipfuSprites.Add(textureShip5);
+
 
         UpdateFleet();
     }
@@ -100,11 +106,14 @@ public class EnhanceScript : MonoBehaviour
             y.gameObject.GetComponent<Image>().sprite = null;
         }
         //}
+        shipIds.Clear();
+
         int ii = 0;
         foreach (var item in shipfus)
         {
             if (ii < 15)
             {
+                shipIds.Add(item);
                 var y = shipfuListItems[ii].transform.Find("TxtClass");
                 var t = y.GetComponentInChildren<TextMeshProUGUI>();
                 t.SetText(GameData.shipfus[item].shipType.ToString());
@@ -152,7 +161,7 @@ public class EnhanceScript : MonoBehaviour
         if (GameData.shipfus.Count > Id)
         {
             int ii = 0;
-            foreach (var item in GameData.shipfus.Keys.ToList())
+            foreach (var item in shipIds)
             {
                 if (ii == Id)
                 {

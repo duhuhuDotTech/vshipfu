@@ -85,7 +85,7 @@ public class FleetSceneScript : MonoBehaviour
     {
         List<Guid> shipfus = GameData.shipfus.Keys.ToList();
         List<Guid> fleet = GameData.activeFleet;
-
+        shipfuListItems.Clear();
         for (int i = 1; i <= 15; i++)
         {
             shipfuListItems.Add(GameObject.Find(i.ToString()));
@@ -104,7 +104,7 @@ public class FleetSceneScript : MonoBehaviour
             y.gameObject.GetComponent<Image>().sprite = rankSprites[(int)GameData.shipfus[item].shipWeight];
             ii++;
         }
-
+        fleetList.Clear();
         for (int i = 1; i <= 5; i++)
         {
             fleetList.Add(GameObject.Find("fleet" + i.ToString()));

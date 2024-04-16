@@ -6317,9 +6317,11 @@ MonoBehaviour:
   textureRank10: {fileID: 21300000, guid: d8a4e09a2e5973d40ab66ec5617c48df, type: 3}
   textureRank11: {fileID: 21300000, guid: 3dd6c92faba96744dbcb37b046676f41, type: 3}
   textureRank12: {fileID: 21300000, guid: cef397fba2991074298cb63052e9405b, type: 3}
-  textureShip1: {fileID: 21300000, guid: f21875b989258cd408f84d84cf9fc1fb, type: 3}
-  textureShip2: {fileID: 21300000, guid: 1f49696cd52e2c7419a4454119369a21, type: 3}
-  textureShip3: {fileID: 21300000, guid: 1f49696cd52e2c7419a4454119369a21, type: 3}
+  textureShip1: {fileID: 21300000, guid: 1f49696cd52e2c7419a4454119369a21, type: 3}
+  textureShip2: {fileID: 21300000, guid: f21875b989258cd408f84d84cf9fc1fb, type: 3}
+  textureShip3: {fileID: 21300000, guid: df43928269f28ac44836dfee3ef76eda, type: 3}
+  textureShip4: {fileID: 21300000, guid: bcdc044fca0d591459178d52d3f5cebc, type: 3}
+  textureShip5: {fileID: 0}
   _detailImage: {fileID: 1307171082}
   _detailRankImage: {fileID: 980034429}
   _detailTextDamage: {fileID: 1073567063}
